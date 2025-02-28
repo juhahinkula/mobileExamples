@@ -1,12 +1,12 @@
 import { StatusBar } from 'expo-status-bar';
-import { View } from 'react-native';
 import Contact from './components/Contact';
+import Sqlite from './components/Sqlite';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function App() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Contact />
+      <Sqlite />
       <StatusBar style="auto" />
     </SafeAreaView>
   );
