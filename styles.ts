@@ -24,5 +24,9 @@ export const styles = StyleSheet.create({
   listView: {
     flexDirection: 'row',
     marginBottom: 5,
-  }
+  },
+  listText: {
+    fontSize: 18,
+    marginRight: 10,
+  },
 });

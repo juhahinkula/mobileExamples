@@ -1,6 +1,7 @@
 import { openDatabaseSync } from 'expo-sqlite';
 import { useEffect, useState } from "react";
 import { Button, FlatList, Text, TextInput, View } from "react-native";
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { styles } from '../styles';
 
 const db = openDatabaseSync('coursedb');
@@ -22,10 +23,11 @@ type Course = {
 }
 
 export default function Sqlite() {
-  const [credit, setCredit] = useState('');
-  const [title, setTitle] = useState('');
+  const [course, setCourse] = useState<Course>({} as Course);
   const [courses, setCourses] = useState<Course[]>([]);
-
+  
+  useDrizzleStudio(db);  
+ 
   useEffect(() => {
     initialize();
     updateList();
@@ -33,10 +35,9 @@ export default function Sqlite() {
 
   const saveItem = async () => {
     try {
-      await db.runAsync('INSERT INTO course (title, credits) VALUES (?, ?)', title, credit);
+      await db.runAsync('INSERT INTO course (title, credits) VALUES (?, ?)', course.title, course.credits);
       updateList();
-      setTitle('');
-      setCredit('');
+      setCourse({} as Course);
     } catch (error) {
       console.error('Could not add item', error);
     }
@@ -66,22 +67,21 @@ export default function Sqlite() {
       <TextInput
           placeholder='Title'
           style={styles.textInput}
-          onChangeText={setTitle}
-          value={title} />
+          onChangeText={text => setCourse({ ...course, title: text })}
+          value={course.title} />
         <TextInput
           placeholder='Credits'
           style={styles.textInput}
           keyboardType='numeric'
-          onChangeText={setCredit}
-          value={credit} />
+          onChangeText={text => setCourse({ ...course, credits: text })}
+          value={course.credits} />
         <Button onPress={saveItem} title="Save" />
-
         <FlatList
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) =>
             <View style={styles.listView}>
-              <Text style={styles.textStyle}>{item.title}</Text>
-              <Text style={styles.textStyle}>{item.credits} </Text>
+              <Text style={styles.listText}>{item.title}</Text>
+              <Text style={styles.listText}>{item.credits} </Text>
               <Text style={{ color: '#ff0000', fontSize: 18 }} onPress={() => deleteItem(item.id)}>
                 Delete
               </Text>
